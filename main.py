@@ -46,7 +46,7 @@ basePair = get_bars(sys.argv[1]).loc[startingDate:]
 
 # get_top100_cryptocurrencies() #Run this line if you want to fetch the current top 100 cryptos and save them to file top100.txt
 
-currencyList = read_top100_from_file(5)
+currencyList = read_top100_from_file(20)
 pairList = list()
 for currencySymbol in currencyList:
     ticker = currencySymbol.upper() + 'USDT'
