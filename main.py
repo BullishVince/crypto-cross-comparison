@@ -7,8 +7,11 @@ import datetime as dt
 import sys
 
 def read_top100_from_file(number_of_currencies):
-    with open("top100.txt", "r") as f:
+    with open("top100.py", "r") as f:
         list = [line.rstrip() for line in f]
+        for i in range(len(list)-1):
+            if '#' in list[i]:
+                list.pop(i)
         return list[:number_of_currencies]
 
 def get_top100_cryptocurrencies(): #I manually call this function once in a while to update my local file containing top 100 cryptos
@@ -46,12 +49,14 @@ basePair = get_bars(sys.argv[1]).loc[startingDate:]
 
 # get_top100_cryptocurrencies() #Run this line if you want to fetch the current top 100 cryptos and save them to file top100.txt
 
-currencyList = read_top100_from_file(20)
+currencyList = read_top100_from_file(50)
 pairList = list()
+iteration = 1
 for currencySymbol in currencyList:
     ticker = currencySymbol.upper() + 'USDT'
-    print('Fetching historical prices for [' + ticker + ']')
+    print('Fetching historical prices for [' + ticker + '] ' + str(iteration))
     pairList.append([ticker, get_bars(ticker).loc[startingDate:]])
+    iteration += 1
 
 for pair in pairList:
     plot_pair(pair)
