@@ -36,20 +36,22 @@ def get_bars(symbol, interval = '30m'):
    df.index = [dt.datetime.fromtimestamp(x/1000.0) for x in df.close_time]
    return df
 
-def plot_pair(pair):
+def plot_pairs_currently_at_loss(pair):
     initialPrice = float(pair[1].loc[startingDate].first('1D')['c'].astype('float')/basePair.loc[startingDate].first('1D')['c'].astype('float'))
     percentage = ((pair[1]['c'].astype('float')/basePair['c'].astype('float'))/initialPrice)*100
-    percentage.plot(figsize=(12,7), label=pair[0])
+    if percentage.iloc[-1] <= 100:
+        percentage.plot(figsize=(12,7), label=pair[0])
 
 
 #####Main code starts here#####
+#####Arguments = Basepair (ex. ICPUSDT), startingDate (ex. 2021-12-13 23:59), number of pairs to compare against (ex. 25)
 print("Running script for " + sys.argv[1] + " [" + sys.argv[2] + " -> Now] ...")
 startingDate = sys.argv[2]
 basePair = get_bars(sys.argv[1]).loc[startingDate:]
 
 # get_top100_cryptocurrencies() #Run this line if you want to fetch the current top 100 cryptos and save them to file top100.txt
 
-currencyList = read_top100_from_file(50)
+currencyList = read_top100_from_file(int(sys.argv[3]))
 pairList = list()
 iteration = 1
 for currencySymbol in currencyList:
@@ -59,7 +61,7 @@ for currencySymbol in currencyList:
     iteration += 1
 
 for pair in pairList:
-    plot_pair(pair)
+    plot_pairs_currently_at_loss(pair)
 plt.hlines(y=100, xmin=min(pairList[0][1].index), xmax=max(pairList[0][1].index), colors='black', linestyles='-', lw=2)
 plt.grid(color = 'green', linestyle = '--', linewidth = 0.5, axis = 'y')
 plt.legend(loc='upper left')
